@@ -13,9 +13,67 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = "https://binyam-cheru.vercel.app";
+
 export const metadata: Metadata = {
-  title: "Binyam Cheru | Full-Stack Systems Architect",
-  description: "Professional documentation-style portfolio of Binyam Cheru, a Full-Stack Systems Architect specializing in building testable, interactive, and scalable web applications.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Binyam Cheru | Full-Stack Systems Architect",
+    template: "%s | Binyam Cheru",
+  },
+  description:
+    "Full-Stack Systems Architect specializing in building testable, scalable, and documented web applications. Explore projects, tech stack, and certifications.",
+  keywords: [
+    "Binyam Cheru",
+    "Full-Stack Developer",
+    "Systems Architect",
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Portfolio",
+    "Web Developer",
+  ],
+  authors: [{ name: "Binyam Cheru", url: siteUrl }],
+  creator: "Binyam Cheru",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName: "Binyam Cheru — Portfolio",
+    title: "Binyam Cheru | Full-Stack Systems Architect",
+    description:
+      "Full-Stack Systems Architect specializing in building testable, scalable, and documented web applications.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Binyam Cheru — Full-Stack Systems Architect",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Binyam Cheru | Full-Stack Systems Architect",
+    description:
+      "Full-Stack Systems Architect specializing in building testable, scalable, and documented web applications.",
+    images: ["/og-image.png"],
+    creator: "@binyamcheru",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
