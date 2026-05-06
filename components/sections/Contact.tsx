@@ -1,9 +1,40 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Send, Mail, MapPin, Phone } from "lucide-react";
 
 export default function Contact() {
+    const [result, setResult] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setIsSubmitting(true);
+        setResult("");
+
+        const formData = new FormData(event.currentTarget);
+        formData.append("access_key", "82c39fb8-45af-48cf-95d2-0fc0fde2fad4");
+
+        try {
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setResult("Message sent successfully!");
+                event.currentTarget.reset();
+            } else {
+                setResult("Something went wrong. Please try again.");
+            }
+        } catch (error) {
+            setResult("An error occurred. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
     return (
         <section id="contact" className="py-20 space-y-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -33,12 +64,14 @@ export default function Contact() {
                 </div>
 
                 <div className="glass p-8 rounded-3xl border border-white/10">
-                    <form className="space-y-4">
+                    <form className="space-y-4" onSubmit={onSubmit}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-1">Name</label>
                                 <input
                                     type="text"
+                                    name="name"
+                                    required
                                     placeholder="John Doe"
                                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-colors"
                                 />
@@ -47,6 +80,8 @@ export default function Contact() {
                                 <label className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-1">Email</label>
                                 <input
                                     type="email"
+                                    name="email"
+                                    required
                                     placeholder="john@example.com"
                                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-colors"
                                 />
@@ -56,6 +91,7 @@ export default function Contact() {
                             <label className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-1">Subject</label>
                             <input
                                 type="text"
+                                name="subject"
                                 placeholder="Project Collaboration"
                                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-colors"
                             />
@@ -64,16 +100,24 @@ export default function Contact() {
                             <label className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-1">Summary</label>
                             <textarea
                                 rows={4}
+                                name="message"
+                                required
                                 placeholder="Tell me about your project..."
                                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-colors resize-none"
                             />
                         </div>
                         <button
                             type="submit"
-                            className="w-full py-4 mt-2 rounded-xl bg-primary text-white font-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            disabled={isSubmitting}
+                            className="w-full py-4 mt-2 rounded-xl bg-primary text-white font-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed"
                         >
-                            Send Message <Send size={18} />
+                            {isSubmitting ? "Sending..." : "Send Message"} {!isSubmitting && <Send size={18} />}
                         </button>
+                        {result && (
+                            <p className={`text-center text-sm font-medium ${result.includes("success") ? "text-green-400" : "text-red-400"}`}>
+                                {result}
+                            </p>
+                        )}
                     </form>
                 </div>
             </div>
