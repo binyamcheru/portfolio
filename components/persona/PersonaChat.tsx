@@ -1,80 +1,59 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, type UIMessage } from "ai";
 import { Bot, MessageCircle, Send, Sparkles, X } from "lucide-react";
 
-type ChatMessage = {
-  id: number;
-  role: "assistant" | "user";
-  text: string;
-};
-
-type PersonaResponse = {
-  message?: string;
-  error?: string;
-};
-
-const initialMessages: ChatMessage[] = [
+const initialMessages: UIMessage[] = [
   {
-    id: 1,
+    id: "welcome",
     role: "assistant",
-    text: "Hi! I’m the early UI prototype of Binyam AI. Send a message to test the chat interface.",
+    parts: [
+      {
+        type: "text",
+        text: "Hi! I’m Binyam AI. Ask me a question to test the streamed Gemini connection.",
+      },
+    ],
   },
 ];
+
+function getMessageText(message: UIMessage) {
+  return message.parts
+    .filter((part) => part.type === "text")
+    .map((part) => part.text)
+    .join("");
+}
 
 export default function PersonaChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const transport = useMemo(
+    () => new DefaultChatTransport({ api: "/api/persona" }),
+    [],
+  );
+  const {
+    messages,
+    sendMessage,
+    status,
+    error,
+    clearError,
+  } = useChat({
+    transport,
+    messages: initialMessages,
+  });
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const isLoading = status === "submitted" || status === "streaming";
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const text = input.trim();
-    if (!text || isSubmitting) return;
+    if (!text || isLoading) return;
 
-    const nextId = messages.length + 1;
-
-    setMessages((currentMessages) => [
-      ...currentMessages,
-      { id: nextId, role: "user", text },
-    ]);
+    if (error) clearError();
     setInput("");
-    setError("");
-    setIsSubmitting(true);
-
-    try {
-      const response = await fetch("/api/persona", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: text }),
-      });
-
-      const data = (await response.json()) as PersonaResponse;
-
-      if (!response.ok || !data.message) {
-        throw new Error(data.error || "The server could not process the message.");
-      }
-
-      const responseMessage = data.message;
-
-      setMessages((currentMessages) => [
-        ...currentMessages,
-        { id: nextId + 1, role: "assistant", text: responseMessage },
-      ]);
-    } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "Something went wrong while contacting the server.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+    void sendMessage({ text });
   }
 
   return (
@@ -94,7 +73,7 @@ export default function PersonaChat() {
                 <h2 className="text-sm font-bold text-white">Binyam AI</h2>
                 <p className="flex items-center gap-1 text-[10px] text-white/40">
                   <Sparkles size={10} aria-hidden="true" />
-                  Local UI prototype
+                  {status === "streaming" ? "Responding…" : "Gemini prototype"}
                 </p>
               </div>
             </div>
@@ -111,29 +90,34 @@ export default function PersonaChat() {
 
           <div
             aria-live="polite"
-            aria-relevant="additions"
+            aria-relevant="additions text"
             className="flex-1 space-y-4 overflow-y-auto px-4 py-5"
           >
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-              >
+            {messages.map((message) => {
+              const text = getMessageText(message);
+              if (!text) return null;
+
+              return (
                 <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                    message.role === "user"
-                      ? "rounded-br-md bg-primary text-white"
-                      : "rounded-bl-md border border-white/10 bg-white/5 text-white/70"
-                  }`}
+                  key={message.id}
+                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  {message.text}
+                  <div
+                    className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                      message.role === "user"
+                        ? "rounded-br-md bg-primary text-white"
+                        : "rounded-bl-md border border-white/10 bg-white/5 text-white/70"
+                    }`}
+                  >
+                    {text}
+                  </div>
                 </div>
-              </div>
-            ))}
-            {isSubmitting && (
+              );
+            })}
+            {status === "submitted" && (
               <div className="flex justify-start" role="status">
                 <div className="rounded-2xl rounded-bl-md border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/50">
-                  Contacting the server…
+                  Waiting for Gemini…
                 </div>
               </div>
             )}
@@ -151,7 +135,7 @@ export default function PersonaChat() {
                 id="persona-message"
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                disabled={isSubmitting}
+                disabled={isLoading}
                 maxLength={1_000}
                 rows={1}
                 placeholder="Ask about Binyam..."
@@ -159,7 +143,7 @@ export default function PersonaChat() {
               />
               <button
                 type="submit"
-                disabled={!input.trim() || isSubmitting}
+                disabled={!input.trim() || isLoading}
                 aria-label="Send message"
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40"
               >
@@ -168,11 +152,11 @@ export default function PersonaChat() {
             </div>
             {error ? (
               <p role="alert" className="mt-2 text-center text-xs text-red-400">
-                {error}
+                {error.message}
               </p>
             ) : (
               <p className="mt-2 text-center text-[10px] text-white/30">
-                Server prototype — OpenAI is not connected yet.
+                Responses stream through your server-side Gemini connection.
               </p>
             )}
           </form>
