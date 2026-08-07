@@ -9,6 +9,11 @@ type ChatMessage = {
   text: string;
 };
 
+type PersonaResponse = {
+  message?: string;
+  error?: string;
+};
+
 const initialMessages: ChatMessage[] = [
   {
     id: 1,
@@ -21,25 +26,55 @@ export default function PersonaChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const text = input.trim();
-    if (!text) return;
+    if (!text || isSubmitting) return;
 
     const nextId = messages.length + 1;
 
     setMessages((currentMessages) => [
       ...currentMessages,
       { id: nextId, role: "user", text },
-      {
-        id: nextId + 1,
-        role: "assistant",
-        text: "This is a local demo response. We’ll connect the server and AI model in later milestones.",
-      },
     ]);
     setInput("");
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/persona", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: text }),
+      });
+
+      const data = (await response.json()) as PersonaResponse;
+
+      if (!response.ok || !data.message) {
+        throw new Error(data.error || "The server could not process the message.");
+      }
+
+      const responseMessage = data.message;
+
+      setMessages((currentMessages) => [
+        ...currentMessages,
+        { id: nextId + 1, role: "assistant", text: responseMessage },
+      ]);
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Something went wrong while contacting the server.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -95,6 +130,13 @@ export default function PersonaChat() {
                 </div>
               </div>
             ))}
+            {isSubmitting && (
+              <div className="flex justify-start" role="status">
+                <div className="rounded-2xl rounded-bl-md border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/50">
+                  Contacting the server…
+                </div>
+              </div>
+            )}
           </div>
 
           <form
@@ -109,22 +151,30 @@ export default function PersonaChat() {
                 id="persona-message"
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
+                disabled={isSubmitting}
+                maxLength={1_000}
                 rows={1}
                 placeholder="Ask about Binyam..."
                 className="max-h-28 min-h-10 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-white outline-none placeholder:text-white/30"
               />
               <button
                 type="submit"
-                disabled={!input.trim()}
+                disabled={!input.trim() || isSubmitting}
                 aria-label="Send message"
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Send size={16} aria-hidden="true" />
               </button>
             </div>
-            <p className="mt-2 text-center text-[10px] text-white/30">
-              Prototype only — no message is sent to a server.
-            </p>
+            {error ? (
+              <p role="alert" className="mt-2 text-center text-xs text-red-400">
+                {error}
+              </p>
+            ) : (
+              <p className="mt-2 text-center text-[10px] text-white/30">
+                Server prototype — OpenAI is not connected yet.
+              </p>
+            )}
           </form>
         </section>
       )}
