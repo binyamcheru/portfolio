@@ -14,6 +14,7 @@ export const personaKnowledge = {
     portfolio: "https://binyam-cheru.vercel.app",
     github: "https://github.com/binyamcheru",
     linkedin: "https://linkedin.com/in/binyam-cheru",
+    x: "https://x.com/bini_code",
   },
   experience: [
     {
@@ -230,24 +231,46 @@ export const personaKnowledge = {
     ],
     toolsAndPlatforms: ["Git", "GitHub", "Docker", "Figma", "REST APIs"],
   },
-  awards: [
+  credentials: [
     {
-      name: "Presidential Award",
-      issuer: "Addis Ababa Science and Technology University",
-      description:
-        "Awarded for an outstanding semester GPA of 3.88/4.00, recognizing academic excellence and performance.",
-    },
-  ],
-  certificates: [
-    {
+      type: "certificate",
       name: "ALX Back-End Web Development (Django)",
+      issuer: "ALX Africa",
+      period: "May 2025 – September 2025",
       description:
         "Completed a four-month intensive backend development program focused on building, testing, and deploying scalable web applications using Django.",
+      evidence: ["Django", "REST APIs", "SQL", "Backend Development"],
+      link: "https://drive.google.com/file/d/1sH2-5wMb99LKrCZ5MWipNzEOeRSMETup/view?usp=drive_link",
     },
     {
+      type: "certificate",
+      name: "Frontend Development with React",
+      issuer: "Google Developer Groups (GDG)",
+      period: "December 2024 – June 2025",
+      description:
+        "Completed frontend development training focused on React, responsive applications, frontend architecture, and modern web development practices.",
+      evidence: ["React", "Responsive UI", "Frontend Architecture", "Modern JavaScript"],
+      link: "https://drive.google.com/file/d/12pd5wToypXEpnGFrl2_hasKsB5AoqpKy/view?usp=drive_link",
+    },
+    {
+      type: "award",
+      name: "Presidential Award",
+      issuer: "Addis Ababa Science and Technology University",
+      period: null,
+      description:
+        "Awarded for an outstanding semester GPA of 3.88/4.00, recognizing academic excellence and performance.",
+      evidence: ["Academic Excellence", "Software Engineering", "3.88/4.00 GPA"],
+      link: "https://drive.google.com/file/d/10KXTy-pmsVsSJfln1RRVGXDUKjZyugu-/view?usp=drive_link",
+    },
+    {
+      type: "certificate",
       name: "Certificate of Appreciation — YeMuya Weg Initiative",
+      issuer: "YeMuya Weg Initiative",
+      period: null,
       description:
         "Recognized for dedication, professionalism, and valuable contributions during internship participation and platform development work.",
+      evidence: ["Professionalism", "Web Development", "Dedication"],
+      link: "https://drive.google.com/file/d/1B0IyQxRrs1mn8DYD57ky8QJMW9jylUuM/view?usp=drive_link",
     },
   ],
 } as const;

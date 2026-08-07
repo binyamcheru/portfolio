@@ -58,10 +58,12 @@ const navGroups: NavGroup[] = [
   }
 ];
 
+const { contact } = personaKnowledge;
+
 const socials = [
-  { name: "GitHub", href: "https://github.com/binyamcheru", icon: Github },
-  { name: "LinkedIn", href: "https://www.linkedin.com/in/binyam-cheru-189b892b4/", icon: Linkedin },
-  { name: "X", href: "https://x.com/bini_code", icon: Twitter },
+  { name: "GitHub", href: contact.github, icon: Github },
+  { name: "LinkedIn", href: contact.linkedin, icon: Linkedin },
+  { name: "X", href: contact.x, icon: Twitter },
 ];
 
 export default function Sidebar() {

@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { Send, Mail, MapPin, Phone } from "lucide-react";
+import { Send, Mail, MapPin } from "lucide-react";
+import { personaKnowledge } from "@/lib/persona/knowledge";
 
 export default function Contact() {
+    const { contact, profile } = personaKnowledge;
     const [result, setResult] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,7 +31,7 @@ export default function Contact() {
             } else {
                 setResult("Something went wrong. Please try again.");
             }
-        } catch (error) {
+        } catch {
             setResult("An error occurred. Please try again.");
         } finally {
             setIsSubmitting(false);
@@ -41,10 +43,10 @@ export default function Contact() {
                 <div className="space-y-6">
                     <div className="space-y-2">
                         <h2 className="text-primary font-mono text-sm tracking-tighter uppercase">Connect</h2>
-                        <h3 className="text-4xl font-bold text-white">Let's build something great together.</h3>
+                        <h3 className="text-4xl font-bold text-white">Let’s build something great together.</h3>
                     </div>
                     <p className="text-white/60 leading-relaxed max-w-md">
-                        I'm currently looking for new opportunities and collaborations. Whether you have a question or just want to say hi, my inbox is always open!
+                        I’m currently looking for new opportunities and collaborations. Whether you have a question or just want to say hi, my inbox is always open!
                     </p>
 
                     <div className="space-y-4 pt-6">
@@ -52,13 +54,13 @@ export default function Contact() {
                             <div className="w-10 h-10 rounded-lg glass border border-white/10 flex items-center justify-center text-primary">
                                 <Mail size={18} />
                             </div>
-                            <span className="font-medium">binyamcheru123@gmail.com</span>
+                            <a href={`mailto:${contact.email}`} className="font-medium hover:text-primary transition-colors">{contact.email}</a>
                         </div>
                         <div className="flex items-center gap-4 text-white/80">
                             <div className="w-10 h-10 rounded-lg glass border border-white/10 flex items-center justify-center text-primary">
                                 <MapPin size={18} />
                             </div>
-                            <span className="font-medium">Addis Ababa, Ethiopia</span>
+                            <span className="font-medium">{profile.location}</span>
                         </div>
                     </div>
                 </div>
