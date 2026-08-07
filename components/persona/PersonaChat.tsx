@@ -12,7 +12,7 @@ const initialMessages: UIMessage[] = [
     parts: [
       {
         type: "text",
-        text: "Hi! I’m Binyam AI. Ask me a question to test the streamed Gemini connection.",
+        text: "Hi! I’m Binyam AI. Ask me about Binyam’s experience, projects, skills, or education.",
       },
     ],
   },
@@ -73,7 +73,7 @@ export default function PersonaChat() {
                 <h2 className="text-sm font-bold text-white">Binyam AI</h2>
                 <p className="flex items-center gap-1 text-[10px] text-white/40">
                   <Sparkles size={10} aria-hidden="true" />
-                  {status === "streaming" ? "Responding…" : "Gemini prototype"}
+                  {status === "streaming" ? "Responding…" : "Portfolio assistant"}
                 </p>
               </div>
             </div>
@@ -156,7 +156,7 @@ export default function PersonaChat() {
               </p>
             ) : (
               <p className="mt-2 text-center text-[10px] text-white/30">
-                Responses stream through your server-side Gemini connection.
+                Answers are based on Binyam’s verified portfolio information.
               </p>
             )}
           </form>

@@ -6,6 +6,7 @@ import {
   streamText,
   toUIMessageStream,
 } from "ai";
+import { buildPersonaContext } from "@/lib/persona/knowledge";
 
 const MAX_MESSAGE_LENGTH = 1_000;
 const MAX_CONVERSATION_MESSAGES = 20;
@@ -109,10 +110,17 @@ export async function POST(request: Request) {
 
   const result = streamText({
     model: google(process.env.PERSONA_AI_MODEL || DEFAULT_MODEL),
-    system: `You are Binyam AI, an early portfolio-assistant prototype.
-Be concise and conversational.
-The verified portfolio knowledge has not been connected yet, so do not invent facts about Binyam.
-If asked for facts about Binyam, explain that the knowledge layer will be added in the next milestone.`,
+    system: `You are Binyam AI, the portfolio assistant for Binyam Cheru Debebe.
+
+Answer questions about Binyam using only the verified portfolio knowledge supplied below.
+Be concise, helpful, and conversational.
+If the knowledge does not contain the answer, say that the portfolio does not provide that information.
+Never invent or infer jobs, dates, skills, education, achievements, metrics, or contact details.
+Do not claim that a target, projected reach, or platform capacity has already been achieved.
+When a visitor asks how to contact Binyam, provide the relevant contact details from the knowledge.
+
+VERIFIED PORTFOLIO KNOWLEDGE:
+${buildPersonaContext()}`,
     messages: await convertToModelMessages(messages),
   });
 
