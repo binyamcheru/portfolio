@@ -16,8 +16,10 @@ import {
   Menu,
   X
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { personaKnowledge } from "@/lib/persona/knowledge";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -26,7 +28,7 @@ function cn(...inputs: ClassValue[]) {
 type NavItem = {
   name: string;
   href: string;
-  icon: any;
+  icon: LucideIcon;
   isSection?: boolean;
 };
 
@@ -63,6 +65,7 @@ const socials = [
 ];
 
 export default function Sidebar() {
+  const { profile } = personaKnowledge;
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("introduction");
   const pathname = usePathname();
@@ -101,7 +104,7 @@ export default function Sidebar() {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4 glass border-b border-white/5">
         <div className="flex items-center gap-3">
           <Image src="/logo.png" alt="Logo" width={24} height={24} />
-          <div className="text-sm font-bold text-white">Binyam Cheru</div>
+          <div className="text-sm font-bold text-white">{profile.displayName}</div>
         </div>
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -126,8 +129,8 @@ export default function Sidebar() {
                 <Image src="/logo.png" alt="Logo" fill className="object-contain p-1" />
               </div>
               <div>
-                <div className="text-sm font-bold text-white">Binyam Cheru</div>
-                <div className="text-[10px] text-white/40 font-mono tracking-tighter">Junior Fullstack Engineer</div>
+                <div className="text-sm font-bold text-white">{profile.displayName}</div>
+                <div className="text-[10px] text-white/40 font-mono tracking-tighter">{profile.shortTitle}</div>
               </div>
             </Link>
             <div className="px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-[10px] font-bold text-primary">

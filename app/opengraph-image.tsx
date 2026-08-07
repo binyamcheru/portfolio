@@ -1,8 +1,11 @@
 import { ImageResponse } from "next/og";
+import { personaKnowledge } from "@/lib/persona/knowledge";
 
 export const runtime = "edge";
 
-export const alt = "Binyam Cheru — Full-Stack Systems Architect";
+const { profile } = personaKnowledge;
+
+export const alt = `${profile.displayName} — ${profile.professionalTitle}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -93,7 +96,7 @@ export default async function Image() {
                         display: "flex",
                     }}
                 >
-                    Binyam Cheru
+                    {profile.displayName}
                 </div>
 
                 {/* Title badge */}
@@ -117,7 +120,7 @@ export default async function Image() {
                             display: "flex",
                         }}
                     >
-                        Full-Stack Systems Architect
+                        {profile.professionalTitle}
                     </div>
                 </div>
 
@@ -131,7 +134,7 @@ export default async function Image() {
                         display: "flex",
                     }}
                 >
-                    Building testable, scalable, and documented web applications.
+                    {profile.summary}
                 </div>
 
                 {/* Bottom tech tags */}

@@ -2,9 +2,12 @@
 
 import React from "react";
 import Image from "next/image";
-import { ArrowRight, Download, FileCode, ChevronRight, ExternalLink } from "lucide-react";
+import { ArrowRight, Download, ChevronRight, ExternalLink } from "lucide-react";
+import { personaKnowledge } from "@/lib/persona/knowledge";
 
 export default function Hero() {
+    const { profile } = personaKnowledge;
+
     return (
         <section id="introduction" className="py-6 lg:py-12 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
             {/* Documentation Breadcrumbs */}
@@ -18,11 +21,11 @@ export default function Hero() {
                 <div className="flex-1 space-y-8">
                     <div className="space-y-4">
                         <h1 className="text-5xl lg:text-7xl font-bold tracking-tight text-white leading-tight">
-                            Binyam Cheru
+                            {profile.displayName}
                         </h1>
                         <div className="flex items-center gap-3">
                             <span className="px-3 py-1 rounded bg-primary/10 border border-primary/20 text-xs font-bold text-primary">
-                                Junior Fullstack Engineer
+                                {profile.professionalTitle}
                             </span>
                             <span className="text-white/20 text-xs font-mono">v1.1.0-stable</span>
                         </div>
@@ -31,10 +34,7 @@ export default function Hero() {
                     <div className="space-y-6 max-w-2xl">
                         <div className="prose prose-invert prose-purple max-w-none">
                             <p className="text-lg text-white/60 leading-relaxed font-medium">
-                                A passionate <span className="text-white">Junior Fullstack Engineer</span> dedicated to building
-                                <span className="text-white font-bold"> clean</span>,
-                                <span className="text-white"> user-centric</span> web applications.
-                                I focus on learning best practices and delivering reliable code while exploring modern technologies.
+                                {profile.summary}
                             </p>
                         </div>
 
@@ -85,7 +85,7 @@ export default function Hero() {
                         <div className="relative w-full h-full rounded-xl overflow-hidden">
                             <Image
                                 src="/bini-dev.webp"
-                                alt="Binyam Cheru"
+                                alt={profile.displayName}
                                 fill
                                 className="object-cover"
                             />

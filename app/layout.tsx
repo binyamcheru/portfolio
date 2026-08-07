@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/sidebar/Sidebar";
 import PersonaChat from "@/components/persona/PersonaChat";
+import { personaKnowledge } from "@/lib/persona/knowledge";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,28 +15,30 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = "https://binyam-cheru.vercel.app";
+const { profile, contact } = personaKnowledge;
+const siteUrl = contact.portfolio;
+const pageTitle = `${profile.displayName} | ${profile.professionalTitle}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Binyam Cheru | Full-Stack Systems Architect",
-    template: "%s | Binyam Cheru",
+    default: pageTitle,
+    template: `%s | ${profile.displayName}`,
   },
-  description:
-    "Full-Stack Systems Architect specializing in building testable, scalable, and documented web applications. Explore projects, tech stack, and certifications.",
+  description: profile.summary,
   keywords: [
-    "Binyam Cheru",
+    profile.displayName,
+    profile.fullName,
+    "Software Engineer",
     "Full-Stack Developer",
-    "Systems Architect",
     "Next.js",
     "React",
     "TypeScript",
     "Portfolio",
     "Web Developer",
   ],
-  authors: [{ name: "Binyam Cheru", url: siteUrl }],
-  creator: "Binyam Cheru",
+  authors: [{ name: profile.fullName, url: siteUrl }],
+  creator: profile.fullName,
   alternates: {
     canonical: "/",
   },
@@ -43,24 +46,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "Binyam Cheru — Portfolio",
-    title: "Binyam Cheru | Full-Stack Systems Architect",
-    description:
-      "Full-Stack Systems Architect specializing in building testable, scalable, and documented web applications.",
+    siteName: `${profile.displayName} — Portfolio`,
+    title: pageTitle,
+    description: profile.summary,
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Binyam Cheru — Full-Stack Systems Architect",
+        alt: `${profile.displayName} — ${profile.professionalTitle}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Binyam Cheru | Full-Stack Systems Architect",
-    description:
-      "Full-Stack Systems Architect specializing in building testable, scalable, and documented web applications.",
+    title: pageTitle,
+    description: profile.summary,
     images: ["/og-image.png"],
     creator: "@binyamcheru",
   },

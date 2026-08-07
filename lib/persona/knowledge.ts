@@ -1,7 +1,9 @@
 export const personaKnowledge = {
   profile: {
     fullName: "Binyam Cheru Debebe",
+    displayName: "Binyam Cheru",
     professionalTitle: "Software Engineer | Full-Stack Developer",
+    shortTitle: "Full-Stack Developer",
     location: "Addis Ababa, Ethiopia",
     summary:
       "Passionate and detail-oriented Full Stack Developer with experience building scalable web applications, responsive user interfaces, and modern digital platforms. Skilled in developing full-stack solutions using Next.js, React, Node.js, Django, and MongoDB. Experienced in collaborative development environments, performance optimization, and creating user-focused applications for real-world impact. Strong foundation in software engineering principles, problem-solving, and modern development workflows.",
@@ -51,6 +53,7 @@ export const personaKnowledge = {
   projects: [
     {
       name: "YeMuyaWeg Initiative Platform",
+      subtitle: "Youth Mentorship and Career Platform",
       description:
         "A youth mentorship and career-development platform built collaboratively for the YeMuyaWeg Initiative.",
       contributions: [
@@ -59,10 +62,22 @@ export const personaKnowledge = {
         "Contributed to a mission-driven platform targeting impact for over 15 million people by 2034.",
       ],
       technologies: ["Next.js", "JavaScript", "Tailwind CSS"],
-      website: "https://yemuyaweginitiative.com",
+      website: "https://yemuyaweginitiative.com/",
+      repository: null,
+      card: {
+        image: "/yemuyaweg.png",
+        status: "Production",
+        problem:
+          "Ethiopian youth need an accessible platform for mentorship and career-development opportunities.",
+        action:
+          "Collaborated on responsive user interfaces and optimized the platform’s performance and user experience.",
+        result:
+          "Contributed to a mission-driven platform targeting impact for over 15 million people by 2034.",
+      },
     },
     {
       name: "DevFlow - Better Stack Overflow",
+      subtitle: "AI-Powered Developer Q&A",
       description:
         "An AI-powered developer knowledge-sharing and collaboration platform.",
       contributions: [
@@ -80,9 +95,23 @@ export const personaKnowledge = {
         "Auth.js",
         "Gemini API",
       ],
+      website: "https://devflow-nextjs-project-xnxb.vercel.app/",
+      repository:
+        "https://github.com/binyamcheru/Devflow-Nextjs-Project",
+      card: {
+        image: "/devFlow.png",
+        status: "Live",
+        problem:
+          "Developers need a modern knowledge-sharing platform with AI assistance for collaboration and problem-solving.",
+        action:
+          "Built question-and-answer features, profile management, Auth.js authentication, and Gemini-powered responses.",
+        result:
+          "Delivered a responsive full-stack developer collaboration platform with integrated AI assistance.",
+      },
     },
     {
       name: "Habesha Home",
+      subtitle: "Mobile Home Rental Application",
       description:
         "A mobile home-rental application tailored for the Ethiopian market.",
       contributions: [
@@ -92,6 +121,55 @@ export const personaKnowledge = {
         "Developed cloud-based backend functionality with real-time database integration.",
       ],
       technologies: ["Flutter", "Firebase", "Dart"],
+      website: null,
+      repository: null,
+      card: null,
+    },
+    {
+      name: "KetemaFarm",
+      subtitle: "Urban Farmers Marketplace",
+      description:
+        "A marketplace interface connecting urban farmers with city consumers.",
+      contributions: [
+        "Developed product-browsing and listing interfaces during a fast-paced hackathon sprint.",
+        "Created a responsive experience designed to improve the visibility of local produce.",
+      ],
+      technologies: ["React", "Tailwind CSS", "Marketplace"],
+      website: "https://ketemafarm-mu.vercel.app/",
+      repository: null,
+      card: {
+        image: "/ketema-farm.png",
+        status: "Hackathon",
+        problem:
+          "Urban farmers need a direct way to make fresh produce visible to city consumers.",
+        action:
+          "Developed responsive product-browsing and listing interfaces during a hackathon sprint.",
+        result:
+          "Built a marketplace interface that connects city farms with potential local customers.",
+      },
+    },
+    {
+      name: "Comfy Store",
+      subtitle: "Furniture E-commerce Frontend",
+      description:
+        "A responsive furniture-store frontend integrated with existing product APIs.",
+      contributions: [
+        "Implemented a shopping-cart flow, product filtering, and responsive product browsing.",
+        "Integrated the frontend with existing backend APIs.",
+      ],
+      technologies: ["React", "Tailwind CSS", "Redux"],
+      website: "https://comfy-store-website.vercel.app/",
+      repository: "https://github.com/binyamcheru/Comfy-Store-Website",
+      card: {
+        image: "/comfy-store.png",
+        status: "Stable",
+        problem:
+          "The project required a modern furniture-store interface that worked with existing backend APIs.",
+        action:
+          "Implemented shopping-cart functionality, product filtering, and responsive browsing.",
+        result:
+          "Delivered a complete frontend shopping flow and product-discovery experience.",
+      },
     },
   ],
   educationAndTraining: [
