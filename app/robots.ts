@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { personaKnowledge } from "@/lib/persona/knowledge";
 
 export default function robots(): MetadataRoute.Robots {
     return {
@@ -6,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             userAgent: "*",
             allow: "/",
         },
-        sitemap: "https://binyam-cheru.vercel.app/sitemap.xml",
+        sitemap: `${personaKnowledge.contact.portfolio}/sitemap.xml`,
     };
 }

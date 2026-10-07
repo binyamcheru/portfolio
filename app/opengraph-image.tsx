@@ -1,189 +1,50 @@
 import { ImageResponse } from "next/og";
 import { personaKnowledge } from "@/lib/persona/knowledge";
 
-export const runtime = "edge";
+const { profile, contact } = personaKnowledge;
 
-const { profile } = personaKnowledge;
-
-export const alt = `${profile.displayName} — ${profile.professionalTitle}`;
+export const alt = `${profile.displayName} — ${profile.shortTitle}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default async function Image() {
-    return new ImageResponse(
-        (
-            <div
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "flex-start",
-                    padding: "80px",
-                    background: "linear-gradient(135deg, #0B0118 0%, #1a0533 50%, #0B0118 100%)",
-                    fontFamily: "system-ui, sans-serif",
-                    position: "relative",
-                    overflow: "hidden",
-                }}
-            >
-                {/* Decorative circles */}
-                <div
-                    style={{
-                        position: "absolute",
-                        top: "-120px",
-                        right: "-120px",
-                        width: "500px",
-                        height: "500px",
-                        borderRadius: "50%",
-                        background: "radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 70%)",
-                        display: "flex",
-                    }}
-                />
-                <div
-                    style={{
-                        position: "absolute",
-                        bottom: "-80px",
-                        left: "-80px",
-                        width: "350px",
-                        height: "350px",
-                        borderRadius: "50%",
-                        background: "radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)",
-                        display: "flex",
-                    }}
-                />
+export default function Image() {
+  const host = contact.portfolio.replace(/^https?:\/\//, "");
 
-                {/* Top bar */}
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px",
-                        marginBottom: "48px",
-                    }}
-                >
-                    <div
-                        style={{
-                            width: "12px",
-                            height: "12px",
-                            borderRadius: "50%",
-                            background: "#A855F7",
-                            display: "flex",
-                        }}
-                    />
-                    <span
-                        style={{
-                            fontSize: "16px",
-                            color: "rgba(255,255,255,0.3)",
-                            letterSpacing: "4px",
-                            textTransform: "uppercase",
-                            fontWeight: 700,
-                        }}
-                    >
-                        Portfolio — v1.0.0
-                    </span>
-                </div>
-
-                {/* Name */}
-                <div
-                    style={{
-                        fontSize: "72px",
-                        fontWeight: 800,
-                        color: "#FFFFFF",
-                        lineHeight: 1.1,
-                        letterSpacing: "-2px",
-                        marginBottom: "16px",
-                        display: "flex",
-                    }}
-                >
-                    {profile.displayName}
-                </div>
-
-                {/* Title badge */}
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px",
-                        marginBottom: "40px",
-                    }}
-                >
-                    <div
-                        style={{
-                            padding: "8px 20px",
-                            borderRadius: "6px",
-                            background: "rgba(168,85,247,0.1)",
-                            border: "1px solid rgba(168,85,247,0.3)",
-                            fontSize: "20px",
-                            fontWeight: 700,
-                            color: "#A855F7",
-                            display: "flex",
-                        }}
-                    >
-                        {profile.professionalTitle}
-                    </div>
-                </div>
-
-                {/* Description */}
-                <div
-                    style={{
-                        fontSize: "22px",
-                        color: "rgba(255,255,255,0.5)",
-                        lineHeight: 1.5,
-                        maxWidth: "700px",
-                        display: "flex",
-                    }}
-                >
-                    {profile.summary}
-                </div>
-
-                {/* Bottom tech tags */}
-                <div
-                    style={{
-                        position: "absolute",
-                        bottom: "60px",
-                        left: "80px",
-                        display: "flex",
-                        gap: "16px",
-                    }}
-                >
-                    {["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL"].map(
-                        (tag) => (
-                            <div
-                                key={tag}
-                                style={{
-                                    padding: "6px 16px",
-                                    borderRadius: "4px",
-                                    background: "rgba(255,255,255,0.03)",
-                                    border: "1px solid rgba(255,255,255,0.08)",
-                                    fontSize: "14px",
-                                    color: "rgba(255,255,255,0.35)",
-                                    fontWeight: 600,
-                                    display: "flex",
-                                }}
-                            >
-                                {tag}
-                            </div>
-                        )
-                    )}
-                </div>
-
-                {/* URL in bottom-right */}
-                <div
-                    style={{
-                        position: "absolute",
-                        bottom: "60px",
-                        right: "80px",
-                        fontSize: "14px",
-                        color: "rgba(255,255,255,0.2)",
-                        fontWeight: 600,
-                        display: "flex",
-                    }}
-                >
-                    binyam-cheru.vercel.app
-                </div>
-            </div>
-        ),
-        { ...size }
-    );
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "72px",
+          background: "#0a0a0c",
+          color: "#ededf0",
+          fontFamily: "ui-sans-serif, system-ui, sans-serif",
+          backgroundImage:
+            "radial-gradient(circle at 50% -20%, rgba(255,255,255,0.14), transparent 50%), linear-gradient(to right, rgba(237,237,240,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(237,237,240,0.05) 1px, transparent 1px)",
+          backgroundSize: "100% 100%, 72px 72px, 72px 72px",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 22, color: "#9b9ba6", letterSpacing: 2 }}>
+          <div style={{ display: "flex", width: 12, height: 12, borderRadius: 999, background: "#ffffff" }} />
+          {host}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", fontSize: 22, color: "#9b9ba6", textTransform: "uppercase", letterSpacing: 5 }}>
+            {profile.shortTitle}
+          </div>
+          <div style={{ display: "flex", fontSize: 104, fontWeight: 700, letterSpacing: -4, marginTop: 14, lineHeight: 1 }}>
+            {profile.displayName}
+          </div>
+          <div style={{ display: "flex", fontSize: 28, color: "#9b9ba6", marginTop: 28, maxWidth: 900, lineHeight: 1.4 }}>
+            Next.js · React · Node.js · Django — building web applications in {profile.location}.
+          </div>
+        </div>
+      </div>
+    ),
+    size,
+  );
 }

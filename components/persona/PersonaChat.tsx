@@ -1,9 +1,15 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { Bot, MessageCircle, Send, Sparkles, X } from "lucide-react";
+import { MessageSquare, Send, X } from "lucide-react";
+import Markdown from "@/components/ui/Markdown";
+import { personaKnowledge } from "@/lib/persona/knowledge";
+import { cn } from "@/lib/utils";
+
+const { profile } = personaKnowledge;
+const ASSISTANT_NAME = "Ask Binyam";
 
 const initialMessages: UIMessage[] = [
   {
@@ -12,10 +18,16 @@ const initialMessages: UIMessage[] = [
     parts: [
       {
         type: "text",
-        text: "Hi! I’m Binyam AI. Ask me about Binyam’s experience, projects, skills, or education.",
+        text: `Hi, I can answer questions about ${profile.displayName}'s work, experience and skills. What would you like to know?`,
       },
     ],
   },
+];
+
+const suggestions = [
+  "What has he built recently?",
+  "Which backend tools does he use?",
+  "How can I contact him?",
 ];
 
 function getMessageText(message: UIMessage) {
@@ -28,135 +40,147 @@ function getMessageText(message: UIMessage) {
 export default function PersonaChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const transport = useMemo(
-    () => new DefaultChatTransport({ api: "/api/persona" }),
-    [],
-  );
-  const {
-    messages,
-    sendMessage,
-    status,
-    error,
-    clearError,
-  } = useChat({
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const transport = useMemo(() => new DefaultChatTransport({ api: "/api/persona" }), []);
+  const { messages, sendMessage, status, error, clearError } = useChat({
     transport,
     messages: initialMessages,
   });
 
   const isLoading = status === "submitted" || status === "streaming";
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
+  }, [messages, status]);
 
-    const text = input.trim();
-    if (!text || isLoading) return;
-
+  function send(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed || isLoading) return;
     if (error) clearError();
     setInput("");
-    void sendMessage({ text });
+    void sendMessage({ text: trimmed });
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    send(input);
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-[60] sm:bottom-8 sm:right-8">
+    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3 sm:bottom-8 sm:right-8">
       {isOpen && (
         <section
           id="persona-chat-panel"
-          aria-label="Binyam AI chat"
-          className="mb-4 flex h-[min(560px,calc(100vh-7rem))] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0B0118]/95 shadow-2xl shadow-black/50 backdrop-blur-xl sm:w-[380px]"
+          aria-label={`${ASSISTANT_NAME} chat`}
+          className="flex h-[min(540px,calc(100vh-7rem))] w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-lg border border-line bg-background shadow-2xl shadow-black/60 sm:w-[360px]"
         >
-          <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
-                <Bot size={18} aria-hidden="true" />
-              </div>
-              <div>
-                <h2 className="text-sm font-bold text-white">Binyam AI</h2>
-                <p className="flex items-center gap-1 text-[10px] text-white/40">
-                  <Sparkles size={10} aria-hidden="true" />
-                  {status === "streaming" ? "Responding…" : "Portfolio assistant"}
-                </p>
-              </div>
+          <header className="flex items-center justify-between border-b border-line px-4 py-3">
+            <div>
+              <h2 className="font-display text-sm font-bold text-foreground">{ASSISTANT_NAME}</h2>
+              <p className="text-xs text-subtle">
+                {status === "streaming" ? "Typing…" : "Answers from verified portfolio data"}
+              </p>
             </div>
-
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              aria-label="Close Binyam AI chat"
-              className="rounded-lg p-2 text-white/50 transition-colors hover:bg-white/5 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              aria-label="Close chat"
+              className="-mr-1 rounded-md p-1.5 text-muted transition-colors hover:bg-surface hover:text-foreground"
             >
-              <X size={18} aria-hidden="true" />
+              <X size={16} aria-hidden="true" />
             </button>
           </header>
 
           <div
+            ref={scrollRef}
             aria-live="polite"
             aria-relevant="additions text"
-            className="flex-1 space-y-4 overflow-y-auto px-4 py-5"
+            className="flex-1 space-y-3 overflow-y-auto px-4 py-4"
           >
             {messages.map((message) => {
               const text = getMessageText(message);
               if (!text) return null;
-
+              const isUser = message.role === "user";
               return (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                >
+                <div key={message.id} className={cn("flex", isUser ? "justify-end" : "justify-start")}>
                   <div
-                    className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                      message.role === "user"
-                        ? "rounded-br-md bg-primary text-white"
-                        : "rounded-bl-md border border-white/10 bg-white/5 text-white/70"
-                    }`}
+                    className={cn(
+                      "max-w-[85%] rounded-lg px-3 py-2 text-sm leading-relaxed",
+                      isUser
+                        ? "whitespace-pre-wrap bg-foreground text-background"
+                        : "border border-line bg-surface text-muted [&_li]:ml-4 [&_li]:list-disc [&_ol_li]:list-decimal [&_p+p]:mt-2 [&_ul+p]:mt-2 [&_ol+p]:mt-2 [&_strong]:font-semibold [&_strong]:text-foreground [&_ul]:mt-1.5 [&_ul]:space-y-0.5 [&_ol]:mt-1.5 [&_ol]:space-y-0.5",
+                    )}
                   >
-                    {text}
+                    {isUser ? text : <Markdown source={text} />}
                   </div>
                 </div>
               );
             })}
+
             {status === "submitted" && (
-              <div className="flex justify-start" role="status">
-                <div className="rounded-2xl rounded-bl-md border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/50">
-                  Waiting for Gemini…
+              <div className="flex justify-start" role="status" aria-label="Waiting for reply">
+                <div className="flex gap-1 rounded-lg border border-line bg-surface px-3 py-3">
+                  {[0, 1, 2].map((i) => (
+                    <span
+                      key={i}
+                      className="h-1.5 w-1.5 animate-pulse rounded-full bg-subtle"
+                      style={{ animationDelay: `${i * 150}ms` }}
+                    />
+                  ))}
                 </div>
               </div>
             )}
+
+            {messages.length === 1 && (
+              <ul className="flex flex-wrap gap-2 pt-2">
+                {suggestions.map((s) => (
+                  <li key={s}>
+                    <button
+                      type="button"
+                      onClick={() => send(s)}
+                      className="rounded-full border border-line px-3 py-1 text-xs text-muted transition-colors hover:border-line-strong hover:text-foreground"
+                    >
+                      {s}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
-          <form
-            onSubmit={handleSubmit}
-            className="border-t border-white/10 bg-black/10 p-3"
-          >
+          <form onSubmit={handleSubmit} className="border-t border-line p-3">
             <label htmlFor="persona-message" className="sr-only">
-              Message Binyam AI
+              Message
             </label>
-            <div className="flex items-end gap-2 rounded-xl border border-white/10 bg-white/5 p-2 focus-within:border-primary/50">
+            <div className="flex items-end gap-2 rounded-md border border-line bg-surface p-1.5 focus-within:border-line-strong">
               <textarea
                 id="persona-message"
                 value={input}
-                onChange={(event) => setInput(event.target.value)}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    send(input);
+                  }
+                }}
                 disabled={isLoading}
                 maxLength={1_000}
                 rows={1}
-                placeholder="Ask about Binyam..."
-                className="max-h-28 min-h-10 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-white outline-none placeholder:text-white/30"
+                placeholder="Ask a question…"
+                className="max-h-28 min-h-9 flex-1 resize-none bg-transparent px-2 py-1.5 text-sm text-foreground outline-none placeholder:text-subtle"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                aria-label="Send message"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label="Send"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-foreground text-background transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
               >
-                <Send size={16} aria-hidden="true" />
+                <Send size={14} aria-hidden="true" />
               </button>
             </div>
-            {error ? (
-              <p role="alert" className="mt-2 text-center text-xs text-red-400">
+            {error && (
+              <p role="alert" className="mt-2 text-xs text-red-400">
                 {error.message}
-              </p>
-            ) : (
-              <p className="mt-2 text-center text-[10px] text-white/30">
-                Answers are based on Binyam’s verified portfolio information.
               </p>
             )}
           </form>
@@ -165,17 +189,14 @@ export default function PersonaChat() {
 
       <button
         type="button"
-        onClick={() => setIsOpen((current) => !current)}
+        onClick={() => setIsOpen((v) => !v)}
         aria-expanded={isOpen}
         aria-controls="persona-chat-panel"
-        aria-label={isOpen ? "Close Binyam AI chat" : "Open Binyam AI chat"}
-        className="ml-auto flex h-14 w-14 items-center justify-center rounded-full border border-primary/30 bg-primary text-white shadow-lg shadow-primary/25 transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary active:scale-95"
+        aria-label={isOpen ? "Close chat" : `Open ${ASSISTANT_NAME}`}
+        className="inline-flex h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-medium text-foreground shadow-lg shadow-black/40 transition-colors hover:border-foreground"
       >
-        {isOpen ? (
-          <X size={22} aria-hidden="true" />
-        ) : (
-          <MessageCircle size={22} aria-hidden="true" />
-        )}
+        {isOpen ? <X size={16} aria-hidden="true" /> : <MessageSquare size={16} aria-hidden="true" />}
+        {!isOpen && <span>{ASSISTANT_NAME}</span>}
       </button>
     </div>
   );

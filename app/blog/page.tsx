@@ -1,58 +1,52 @@
-"use client";
-
-import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import Section from "@/components/ui/Section";
-import Spotlight from "@/components/ui/Spotlight";
-import { Calendar, Clock, ArrowRight } from "lucide-react";
-
+import { ArrowLeft } from "lucide-react";
 import { blogPosts } from "@/lib/blog-data";
 
+export const metadata: Metadata = {
+  title: "Writing",
+  description: "Notes on backend systems, Next.js rendering and the tools behind modern web apps.",
+  alternates: { canonical: "/blog" },
+};
 
 export default function BlogPage() {
-    return (
-        <div className="pb-20 space-y-10">
-            <div className="space-y-4 pt-10">
-                <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-white">Technical Insights</h1>
-                <p className="text-white/60 max-w-2xl leading-relaxed">
-                    Sharing my thoughts on systems architecture, frontend performance, and the tools that power the modern web.
+  return (
+    <main className="mx-auto max-w-[820px] px-6 py-8 sm:px-10 sm:py-10">
+      <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-heading">
+        <ArrowLeft size={12} /> Back to resume
+      </Link>
+      <header className="mt-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-subtle">Writing</p>
+        <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          Notes from the build
+        </h1>
+        <p className="mt-4 text-[15px] leading-relaxed text-muted">
+          Short explanations of things I’ve had to learn properly: runtimes,
+          rendering strategies and the trade-offs behind them.
+        </p>
+      </header>
+
+      <ul className="mt-12 divide-y divide-line border-t border-line">
+        {blogPosts.map((post) => (
+          <li key={post.slug}>
+            <Link
+              href={`/blog/${post.slug}`}
+              className="group grid gap-2 py-6 sm:grid-cols-[140px_1fr] sm:gap-10"
+            >
+              <p className="font-mono text-xs text-subtle">{post.date}</p>
+              <div>
+                <h2 className="font-display text-lg font-semibold tracking-tight text-foreground underline-offset-4 group-hover:underline">
+                  {post.title}
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{post.excerpt}</p>
+                <p className="mt-3 font-mono text-[11px] text-subtle">
+                  {post.category} · {post.readTime}
                 </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 pt-10">
-                {blogPosts.map((post) => (
-                    <Section key={post.slug}>
-                        <Link href={`/blog/${post.slug}`}>
-                            <Spotlight className="rounded-2xl">
-                                <div className="glass p-8 border border-white/5 hover:border-primary/20 transition-all group">
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary px-3 py-1 rounded-full bg-primary/10 border border-primary/20 w-fit">
-                                            {post.category}
-                                        </span>
-                                        <div className="flex items-center gap-4 text-white/40 text-xs">
-                                            <div className="flex items-center gap-1.5">
-                                                <Calendar size={14} />
-                                                {post.date}
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <Clock size={14} />
-                                                {post.readTime}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <h2 className="text-2xl font-bold text-white mb-4 group-hover:text-primary transition-colors">{post.title}</h2>
-                                    <p className="text-white/60 leading-relaxed max-w-3xl mb-6">{post.excerpt}</p>
-
-                                    <div className="flex items-center gap-2 text-primary font-bold text-sm">
-                                        Read Post <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                                    </div>
-                                </div>
-                            </Spotlight>
-                        </Link>
-                    </Section>
-                ))}
-            </div>
-        </div>
-    );
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </main>
+  );
 }

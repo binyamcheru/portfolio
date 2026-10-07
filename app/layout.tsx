@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/sidebar/Sidebar";
 import PersonaChat from "@/components/persona/PersonaChat";
+import Sidebar from "@/components/layout/Sidebar";
+import { themeInitScript } from "@/components/layout/Theme";
 import { personaKnowledge } from "@/lib/persona/knowledge";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
+});
+
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
 });
 
 const { profile, contact } = personaKnowledge;
@@ -46,24 +53,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: `${profile.displayName} — Portfolio`,
+    siteName: profile.displayName,
     title: pageTitle,
     description: profile.summary,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: `${profile.displayName} — ${profile.professionalTitle}`,
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: pageTitle,
     description: profile.summary,
-    images: ["/og-image.png"],
-    creator: "@binyamcheru",
+    creator: "@bini_code",
   },
   robots: {
     index: true,
@@ -84,30 +82,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-primary/30 selection:text-white`}
-      >
-        {/* Cosmic Background */}
-        <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-[#0B0118]">
-          <div
-            className="absolute inset-0 opacity-40 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: 'url("/background.png")' }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0B0118]/80 via-transparent to-[#0B0118]" />
-          <div className="absolute inset-0 dotted-grid opacity-30" />
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(168,85,247,0.15),transparent_50%)]" />
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrains.variable} ${jakarta.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      {/* suppressHydrationWarning: browser extensions (e.g. ColorZilla) inject attributes on <body>. */}
+      <body className="min-h-screen" suppressHydrationWarning>
+        <div className="shell mx-auto max-w-[1200px] p-3 sm:p-5 lg:p-8">
+          <div className="shell-card grid overflow-hidden rounded-2xl border border-line bg-card shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_40px_-24px_rgba(0,0,0,0.25)] lg:grid-cols-[232px_1fr]">
+            <Sidebar />
+            <main className="min-w-0">{children}</main>
+          </div>
         </div>
-
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <main className="flex-1 lg:ml-[280px] min-h-screen overflow-y-auto px-4 py-8 lg:p-12 relative z-10">
-            <div className="max-w-5xl mx-auto pt-16 lg:pt-0">
-              {children}
-            </div>
-          </main>
+        <div className="no-print">
+          <PersonaChat />
         </div>
-        <PersonaChat />
       </body>
     </html>
   );
