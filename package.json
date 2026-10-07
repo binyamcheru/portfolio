@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "resume:pdf": "node scripts/build-resume.mjs"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.37",
@@ -29,6 +30,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "^16.3.8",
+    "playwright-core": "1.52",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
