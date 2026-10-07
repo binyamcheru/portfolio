@@ -20,7 +20,7 @@ import { Bullets, Chip, Section, TimelineItem } from "@/components/resume/primit
 import { personaKnowledge } from "@/lib/persona/knowledge";
 import { featuredProjects, projects } from "@/lib/projects";
 
-const RESUME_PDF = "/Binyam_Cheru_Resume.pdf";
+const RESUME_PDF = "/BINYAM_CHERU_DEBEBE_Latest.pdf";
 
 export default function Home() {
   const { profile, contact, experience, skills, educationAndTraining, credentials } = personaKnowledge;

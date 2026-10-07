@@ -9,7 +9,7 @@ export const personaKnowledge = {
       "I build modern web applications with React, Next.js, Node.js and Django. I care about shipping useful products, learning new technologies, and solving real-world problems through code.",
     motto: "Build things that solve real problems.",
     summary:
-      "Passionate and detail-oriented Full Stack Developer with experience building scalable web applications, responsive user interfaces, and modern digital platforms. Skilled in developing full-stack solutions using Next.js, React, Node.js, Django, and MongoDB. Experienced in collaborative development environments, performance optimization, and creating user-focused applications for real-world impact. Strong foundation in software engineering principles, problem-solving, and modern development workflows.",
+      "Full-stack developer who ships end to end: REST APIs, authentication and data models in Node.js/TypeScript and Django, and fast, accessible interfaces in Next.js and React. Internship experience on production platforms, a published Chrome extension, and a habit of writing clean, documented, tested code. Strong foundation in software engineering principles, problem-solving and modern development workflows.",
   },
   contact: {
     email: "binyamcheru123@gmail.com",
