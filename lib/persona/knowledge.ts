@@ -323,6 +323,7 @@ export const personaKnowledge = {
         result:
           "A fluid 60fps architectural tour and complete enquiry funnel, deployed on Vercel.",
       },
+      gallery: ["/valmont/screen-capture.webm"],
     },
     {
       slug: "zemen-homes",

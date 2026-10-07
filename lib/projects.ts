@@ -35,10 +35,14 @@ export function shortName(project: Project) {
   return project.name.split(" - ")[0];
 }
 
-/** Screenshots for the gallery: the card image plus any optional `gallery` entries. */
+/** Screenshots and clips for the gallery: the card image plus any optional `gallery` entries. */
 export function galleryOf(project: Project): string[] {
   const extra = "gallery" in project && Array.isArray(project.gallery) ? [...project.gallery] : [];
   return project.card ? [project.card.image, ...extra] : extra;
+}
+
+export function isVideo(src: string) {
+  return /\.(webm|mp4|mov)$/i.test(src);
 }
 
 /** Phone screenshots are tall; the gallery renders them contained instead of cropped. */

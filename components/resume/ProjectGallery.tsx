@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Images, Pause, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, Images, Pause, Play, Video } from "lucide-react";
+import { isVideo } from "@/lib/projects";
 import { cn } from "@/lib/utils";
 
 export default function ProjectGallery({
@@ -18,13 +19,23 @@ export default function ProjectGallery({
 }) {
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
   const many = images.length > 1;
+  const videoCount = images.filter(isVideo).length;
+  const currentIsVideo = isVideo(images[index]);
 
+  // Slideshow waits while a clip is on screen; pause clips that scroll out of view.
   useEffect(() => {
-    if (!playing || !many) return;
+    if (!playing || !many || currentIsVideo) return;
     const id = window.setInterval(() => setIndex((i) => (i + 1) % images.length), 3500);
     return () => window.clearInterval(id);
-  }, [playing, many, images.length]);
+  }, [playing, many, images.length, currentIsVideo]);
+
+  useEffect(() => {
+    Object.entries(videoRefs.current).forEach(([i, el]) => {
+      if (el && Number(i) !== index) el.pause();
+    });
+  }, [index]);
 
   const go = (d: number) => setIndex((i) => (i + d + images.length) % images.length);
   const host = url ? url.replace(/^https?:\/\//, "").replace(/\/$/, "") : title.toLowerCase().replace(/\s+/g, "-");
@@ -34,7 +45,10 @@ export default function ProjectGallery({
       <div className="flex items-center justify-between gap-4">
         <h2 className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-accent">
           <Images size={12} /> Project gallery
-          <span className="text-subtle">({images.length} {images.length === 1 ? "shot" : "shots"})</span>
+          <span className="text-subtle">
+            ({images.length - videoCount} {images.length - videoCount === 1 ? "shot" : "shots"}
+            {videoCount > 0 && `, ${videoCount} ${videoCount === 1 ? "clip" : "clips"}`})
+          </span>
         </h2>
         {many && (
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-subtle">
@@ -63,7 +77,26 @@ export default function ProjectGallery({
         </div>
 
         <div className={cn("group relative bg-surface-2", portrait ? "aspect-[16/9] bg-[radial-gradient(ellipse_at_center,var(--surface-2),var(--surface))]" : "aspect-[16/9]")}>
-          {images.map((src, i) => (
+          {images.map((src, i) =>
+            isVideo(src) ? (
+              <video
+                key={src}
+                ref={(el) => {
+                  videoRefs.current[i] = el;
+                }}
+                src={src}
+                controls
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-label={`${title} video ${i + 1}`}
+                className={cn(
+                  "absolute inset-0 h-full w-full bg-black object-contain transition-opacity duration-500",
+                  i === index ? "opacity-100" : "pointer-events-none opacity-0",
+                )}
+              />
+            ) : (
             <Image
               key={src}
               src={src}
@@ -74,10 +107,11 @@ export default function ProjectGallery({
               className={cn(
                 "transition-opacity duration-500",
                 portrait ? "object-contain p-4" : "object-cover object-top",
-                i === index ? "opacity-100" : "opacity-0",
+                i === index ? "opacity-100" : "pointer-events-none opacity-0",
               )}
             />
-          ))}
+            ),
+          )}
           {many && (
             <>
               <button
@@ -101,7 +135,7 @@ export default function ProjectGallery({
         </div>
 
         <p className="border-t border-line px-4 py-2 text-center font-mono text-[11px] text-subtle">
-          {title} — {many ? `Screenshot ${index + 1}` : "Cover preview"}
+          {title} — {currentIsVideo ? `Video walkthrough` : many ? `Screenshot ${index + 1}` : "Cover preview"}
         </p>
 
         {many && (
@@ -111,7 +145,7 @@ export default function ProjectGallery({
                 <button
                   type="button"
                   onClick={() => setIndex(i)}
-                  aria-label={`Show screenshot ${i + 1}`}
+                  aria-label={isVideo(src) ? `Play video ${i + 1}` : `Show screenshot ${i + 1}`}
                   aria-current={i === index}
                   className={cn(
                     "relative overflow-hidden rounded border transition-colors",
@@ -119,7 +153,13 @@ export default function ProjectGallery({
                     i === index ? "border-accent" : "border-line opacity-60 hover:opacity-100",
                   )}
                 >
-                  <Image src={src} alt="" fill sizes="80px" className={portrait ? "object-cover object-top" : "object-cover object-top"} />
+                  {isVideo(src) ? (
+                    <span className="flex h-full w-full items-center justify-center bg-black text-white">
+                      <Video size={14} />
+                    </span>
+                  ) : (
+                    <Image src={src} alt="" fill sizes="80px" className="object-cover object-top" />
+                  )}
                 </button>
               </li>
             ))}
